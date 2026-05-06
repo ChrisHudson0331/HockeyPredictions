@@ -1,3 +1,6 @@
+import requests
+import pandas as pd
+
 def get_bracket(year):
     url = "https://api-web.nhle.com/v1/playoff-bracket/" + str(year)
     response = requests.get(url)
