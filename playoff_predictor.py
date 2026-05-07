@@ -9,7 +9,7 @@ def get_and_merge_input_data_and_results(start_year = 2005):
     dfs = []
     for year in range(start_year,end_year):
         if year != 2005:
-            df = pd.read_csv("team_stats_year=" + str(year) + ".csv", index_col=0) 
+            df = pd.read_csv("team_stats/team_stats_year=" + str(year) + ".csv", index_col=0) 
             df["season"] = year
             dfs.append(df)
     data = pd.concat(dfs)
