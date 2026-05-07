@@ -61,13 +61,11 @@ def recommendation(y):
             recommend[i] = 3
     return recommend
 
-def generate_model_predictions():
+def generate_model_predictions(statr_year):
     perrors = []
     nerrors = []
     rerrors = []
-    start_year = 2007
     for timesplit in range(start_year, 2026):
-        print(timesplit)
         data = get_and_merge_input_data_and_results()
         y_pred, y_test = timesplit_estimate(data, timesplit)
         y_naive = [4,2,3,2,4,2,3,2,1,1,1,1,1,1,1,1]
@@ -81,7 +79,7 @@ def generate_model_predictions():
         rerrors.append(sum((np.array(rr) - np.array(rt))**2))
     return perrors, nerrors, rerrors
 
-def generate_performance_plots(perrors, nerrors, rerrors):
+def generate_performance_plots(perrors, nerrors, rerrors, start_year):
     plt.plot([x for x in range(start_year, 2026)], np.array(perrors) - np.array(nerrors), '.',
              [x for x in range(start_year, 2026)], [0 for x in range(start_year,2026)], 'orange',
              [x for x in range(start_year, 2026)], [8 for x in range(start_year,2026)], 'orange',
@@ -97,8 +95,9 @@ def generate_performance_plots(perrors, nerrors, rerrors):
     plt.savefig('prediction-random_estimate_score_difference.pdf')
 
 if __name__ == "__main__":
-    perrors, nerrors, rerrors = generate_model_predictions()
-    generate_performance_plots(perrors, nerrors, rerrors)
+    start_year = 2007
+    perrors, nerrors, rerrors = generate_model_predictions(start_year)
+    generate_performance_plots(perrors, nerrors, rerrors, start_year)
 
 
 
