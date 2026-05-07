@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
 
+# Get a list of the teams which will be playing in the playoffs. Their position in the list is consistent with their position in the standings.
 def get_bracket(year):
     url = "https://api-web.nhle.com/v1/playoff-bracket/" + str(year)
     response = requests.get(url)
@@ -10,6 +11,7 @@ def get_bracket(year):
     teams = topSeeds + bottomSeeds
     return teams
 
+# A recursive algorithm for finding the last day of the regular season so that the most up to date stats can be used for the input dataset.
 def get_season_end_date(year, day = 15, last_day = 30, first_day = 1):
     day_str = str(day)
     if day < 10:
@@ -32,6 +34,10 @@ def get_season_end_date(year, day = 15, last_day = 30, first_day = 1):
             return get_season_end_date(year, day = int((last_day - day)/2) + day + 1, last_day = last_day, 
                                        first_day = day + 1)    
 
+# This function calls the NHL API who's endpoint is stored in the url variable to fetch the data for the team to be used as the inputs for the prediction
+# model. The list of keys for the stats_dic dictionary indicate the the stats that are recorded for model inputs, they are normalized to a per game basis.
+# The ranking metric is the playoff performance of the teams in previous years playoffs, ranging from 0-4 where 4 is a finalist and 0 didn't make the 
+# playoffs.
 def get_team_stats(year, teams):
     end_date = get_season_end_date(year)
     end_date_str = str(end_date)
@@ -66,19 +72,24 @@ def get_team_stats(year, teams):
         for team in teams:
             team_stats[team]['ranking-' + str(y)] = bracket.count("\'" + team + "\'")
     return team_stats
-        
+
+# Generate the csv file for a given year of team stats in the team_stats folder. This data is the inputs for the prediction model.
 def save_input_data(year):
     teams = get_bracket(year)
     team_stats = get_team_stats(year, teams)
     df_input_data = pd.DataFrame.from_dict(team_stats, orient='index')
     df_input_data.to_csv("team_stats/team_stats_year=" + str(year) + ".csv", index=True)
 
+# For each year the save_input_data function is called to create a csv file in the team_stats folder
 def generate_dataset():
     for year in range(1980, 2027):
         print(year)
         if year != 2005:
             save_input_data(year)
-            
+
+# The API embedded in the variable url is called to get the playoff data. For each year the teams in the playoffs are saved in a table along with their final
+# rank in the playoffs with a 1 being a first round exit, 2 a second round exit, 3 a third round exit and 4 a finalist. These final rankings are a score
+# the prediction model should predict for each 
 def get_results():
     results = {}
     for year in range(1980,2026):
@@ -93,10 +104,26 @@ def get_results():
             teams = topSeeds + bottomSeeds
             for i, team in enumerate(teams):
                 results[str(year)]['Team' + str(i)] = team
-                results[str(year)]['Rank' + str(i)] = bracket.count("\'" + team + "\'")**2
+                results[str(year)]['Rank' + str(i)] = bracket.count("\'" + team + "\'")
     df_results_data = pd.DataFrame.from_dict(results, orient='index')
     df_results_data.to_csv("playoff_results.csv", index=True)
 
+# generate_dataset() generates the csv files in the "team_stats" folder. This is the data used to predict playoff outcomes by the prediction model.
+# get_results() generates the playoff_results.csv file containing the playoff results for each year for training the prediction model.
 if __name__ == "__main__":
-    generate_dataset()
+    #generate_dataset()
     get_results()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
