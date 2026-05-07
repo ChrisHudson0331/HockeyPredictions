@@ -69,7 +69,6 @@ def generate_model_predictions():
     for timesplit in range(start_year, 2026):
         print(timesplit)
         data = get_and_merge_input_data_and_results()
-        data_wide = get_wide_dataset()
         y_pred, y_test = timesplit_estimate(data, timesplit)
         y_naive = [4,2,3,2,4,2,3,2,1,1,1,1,1,1,1,1]
         y_rand = np.random.randint(1, 101, size=16)
