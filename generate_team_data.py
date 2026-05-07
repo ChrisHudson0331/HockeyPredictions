@@ -111,7 +111,7 @@ def get_results():
 # generate_dataset() generates the csv files in the "team_stats" folder. This is the data used to predict playoff outcomes by the prediction model.
 # get_results() generates the playoff_results.csv file containing the playoff results for each year for training the prediction model.
 if __name__ == "__main__":
-    #generate_dataset()
+    generate_dataset()
     get_results()
 
 
